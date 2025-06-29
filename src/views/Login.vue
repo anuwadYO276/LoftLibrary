@@ -55,6 +55,7 @@
 </template>
 
 <script setup>
+import axios, { AxiosError } from 'axios'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -62,18 +63,34 @@ const identifier = ref('')
 const password = ref('')
 const router = useRouter()
 
-function submitLogin() {
+async function submitLogin() {
   const value = identifier.value.trim()
-  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) // simple regex
+  // const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) // simple regex
 
-  if (!value || !password.value) {
-    alert('Please enter both identifier and password.')
-    return
-  }
+  // if (!value || !password.value) {
+  //   alert('Please enter both identifier and password.')
+  //   return
+  // }
 
-  alert(`Logging in with ${isEmail ? 'Email' : 'Username'}: ${value}`)
+  // alert(`Logging in with ${isEmail ? 'Email' : 'Username'}: ${value}`)
   
   // TODO: call your auth API here...
-  router.push('/reader-desktop')
+
+  try{
+    // console.log(value, password)
+    const login = await axios.post(`${import.meta.env.VITE_API_URL}/login`,{ //เรียกใช้ env
+      Account: value, 
+      password: password.value
+    })
+  } catch(err){
+    if(err instanceof AxiosError){
+      alert(err.response?.data.message || "System has problem. Please try again later.")
+    }
+    console.error(err)
+    // alert(``)
+  }
+
+
+   router.push('/reader-desktop')
 }
 </script>

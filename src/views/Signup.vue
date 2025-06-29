@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -91,12 +92,31 @@ const password = ref('')
 const passwordConfirm = ref('')
 const router = useRouter()
 
-function submitSignup() {
+async function submitSignup() {
   if (password.value !== passwordConfirm.value) {
     alert("Passwords don't match")
     return
   }
-  alert(`Signing up with ${email.value}`)
-  router.push('/reader-desktop')
+  // alert(`Signing up with ${email.value}`)
+  // // router.push('/reader-desktop')
+
+  try{
+    // console.log(value, password)
+    const Register = await axios.post(`${import.meta.env.VITE_API_URL}/signup/reader`,{ //เรียกใช้ env
+      username : username.value,
+      email : email.value, 
+      password: password.value
+    })
+  } catch(err){
+    if(err instanceof AxiosError){
+      alert(err.response?.data.message || "System has problem. Please try again later.")
+    }
+    console.error(err)
+    // alert(``)
+  }
+
+
+   router.push('/reader-desktop')
 }
 </script>
+
